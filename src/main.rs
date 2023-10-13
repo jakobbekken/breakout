@@ -43,7 +43,7 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)))
         .insert_resource(Scoreboard { score: 0 })
         .add_systems(Update, (bevy::window::close_on_esc, update_scoreboard))
-        .add_systems(Startup, setup)
+        .add_systems(Startup, (setup, play_background_audio))
         .add_systems(
             FixedUpdate,
             (
@@ -362,4 +362,13 @@ fn update_scoreboard(score: Res<Scoreboard>, mut query: Query<&mut Text>) {
     let mut text = query.single_mut();
     text.sections[1].value = score.score.to_string();
 }
+
+fn play_background_audio(asset_server: Res<AssetServer>, mut commands: Commands) {
+    // Create an entity dedicated to playing our background music
+    commands.spawn(AudioBundle {
+        source: asset_server.load("sounds/ost.ogg"),
+        settings: PlaybackSettings::LOOP,
+    });
+}
+
 // https://www.youtube.com/watch?v=E9SzRc9HkOg
